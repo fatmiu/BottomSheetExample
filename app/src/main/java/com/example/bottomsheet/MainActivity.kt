@@ -2,20 +2,14 @@ package com.example.bottomsheet
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.os.Handler
+import android.os.Looper
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bottomsheet.databinding.ActivityMainBinding
-import com.example.bottomsheet.databinding.BottomSheetRecyclerViewBinding
-import com.google.android.material.R.style
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,6 +17,8 @@ class MainActivity : AppCompatActivity() {
 
     private val bottomSheetView by lazy { binding.bottomSheet }
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+
+    private val handler by lazy { Handler(Looper.getMainLooper()) }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +32,13 @@ class MainActivity : AppCompatActivity() {
             adapter = NumberAdapter()
             layoutManager = LinearLayoutManager(context)
         }
+
+        handler.postDelayed({
+            val itemView: View? =
+                bottomSheetView.bottomSheetRecyclerView.layoutManager?.findViewByPosition(0)
+            val itemHeight: Int = itemView?.height ?: 0
+            bottomSheetBehavior.peekHeight = itemHeight + bottomSheetView.viewHandler.height
+        }, 100)
 
         bottomSheetView.bottomSheetRecyclerView.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action) {
